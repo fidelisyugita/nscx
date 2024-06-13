@@ -1,4 +1,4 @@
-import { Link, Stack } from "expo-router";
+import { Link, Stack, router } from "expo-router";
 import {
   FlatList,
   Image,
@@ -13,10 +13,14 @@ import { Onboardings } from "@/constants/Onboardings";
 import Animated, {
   Extrapolation,
   interpolate,
+  useAnimatedRef,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
+import { Colors } from "@/constants/Colors";
+import { ThemedButton } from "@/components/ThemedButton";
+import { useMemo } from "react";
 
 export default function OnboardingScreen() {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
@@ -24,9 +28,24 @@ export default function OnboardingScreen() {
   const onScroll = useAnimatedScrollHandler({
     onScroll: (event) => {
       x.value = event.contentOffset.x;
-      console.log(event.contentOffset.x);
     },
   });
+
+  const flatListRef = useAnimatedRef();
+  const flatListIndex = useSharedValue(0);
+
+  const onViewableItemsChanged = ({ viewableItems }) => {
+    flatListIndex.value = viewableItems[0].index;
+    console.log(viewableItems[0].index);
+  };
+
+  const onPress = () => {
+    if (flatListIndex.value < Onboardings.length - 1) {
+      flatListRef.current.scrollToIndex({ index: flatListIndex.value + 1 });
+    } else {
+      router.navigate("/home");
+    }
+  };
 
   const RenderItem = ({ item, index }) => {
     const imageAnimationStyle = useAnimatedStyle(() => {
@@ -102,9 +121,29 @@ export default function OnboardingScreen() {
     );
   };
 
+  const DotComponent = ({ i }) => {
+    const dotAnimationStyle = useAnimatedStyle(() => {
+      const widthAnimation = interpolate(
+        x.value,
+        [(i - 1) * SCREEN_WIDTH, i * SCREEN_WIDTH, (i + 1) * SCREEN_WIDTH],
+        [6, 32, 6],
+        Extrapolation.CLAMP
+      );
+      return {
+        width: widthAnimation,
+        backgroundColor:
+          widthAnimation > 16
+            ? Colors.light.primary500
+            : Colors.light.bunker300,
+      };
+    });
+    return <Animated.View style={[styles.dot, dotAnimationStyle]} />;
+  };
+
   return (
     <ThemedView style={styles.container}>
       <Animated.FlatList
+        ref={flatListRef}
         onScroll={onScroll}
         horizontal
         pagingEnabled
@@ -116,7 +155,20 @@ export default function OnboardingScreen() {
           return <RenderItem item={item} index={index} />;
         }}
         keyExtractor={(item) => String(item.id)}
+        onViewableItemsChanged={onViewableItemsChanged}
       />
+      <View style={styles.dotsContainer}>
+        {Onboardings.map((_, i) => {
+          return <DotComponent i={i} key={i} />;
+        })}
+      </View>
+      <View style={styles.button}>
+        <ThemedButton
+          onPress={onPress}
+          // text1={flatListIndex.value == 2 ? "Get Started" : "Next"}
+          text1={"Next"}
+        />
+      </View>
     </ThemedView>
   );
 }
@@ -127,7 +179,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignItems: "center",
   },
   title: {
@@ -137,5 +189,22 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 12,
     marginBottom: 24,
+  },
+  dotsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingBottom: 140,
+  },
+  dot: {
+    height: 6,
+    width: 6,
+    borderRadius: 3,
+    marginHorizontal: 2,
+    backgroundColor: Colors.light.bunker300,
+  },
+  button: {
+    marginHorizontal: 16,
+    // marginVertical: 14,
   },
 });
