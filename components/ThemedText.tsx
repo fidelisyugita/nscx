@@ -7,7 +7,10 @@ export type ThemedTextProps = TextProps & {
   darkColor?: string;
   type?:
     | "h4"
+    | "h7"
+    | "h8"
     | "small"
+    | "xSmall"
     | "large"
     | "default"
     | "title"
@@ -30,6 +33,9 @@ export function ThemedText({
       style={[
         { color },
         type === "h4" ? styles.h4 : undefined,
+        type === "h7" ? styles.h7 : undefined,
+        type === "h8" ? styles.h8 : undefined,
+        type === "xSmall" ? styles.xSmall : undefined,
         type === "small" ? styles.small : undefined,
         type === "large" ? styles.large : undefined,
 
@@ -50,6 +56,21 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
     lineHeight: 30,
+  },
+  h7: {
+    fontSize: 14,
+    fontWeight: "700",
+    lineHeight: 20,
+  },
+  h8: {
+    fontSize: 12,
+    fontWeight: "700",
+    lineHeight: 18,
+  },
+  xSmall: {
+    fontSize: 10,
+    fontWeight: "400",
+    lineHeight: 16,
   },
   small: {
     fontSize: 12,

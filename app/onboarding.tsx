@@ -165,8 +165,8 @@ export default function OnboardingScreen() {
       <View style={styles.button}>
         <ThemedButton
           onPress={onPress}
-          // text1={flatListIndex.value == 2 ? "Get Started" : "Next"}
-          text1={"Next"}
+          text1={flatListIndex.value == 2 ? "Get Started" : "Next"}
+          // text1={"Next"}
         />
       </View>
     </ThemedView>
@@ -195,12 +195,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingBottom: 140,
+    gap: 4,
   },
   dot: {
     height: 6,
     width: 6,
     borderRadius: 3,
-    marginHorizontal: 2,
+    // marginHorizontal: 2,
     backgroundColor: Colors.light.bunker300,
   },
   button: {

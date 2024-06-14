@@ -11,7 +11,10 @@ export const Colors = {
     primary500: "#F26422",
     primary400: "#F58242",
 
+    bunker700: "#4C4D58",
+    bunker500: "#737584",
     bunker300: "#B8B9C1",
+    bunker100: "#EEEEF0",
     bunker50: "#F7F7F8",
 
     text: "#11181C",
